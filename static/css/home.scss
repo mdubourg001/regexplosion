@@ -17,6 +17,11 @@
 body {
   font-family: "Cantarell", sans-serif;
   opacity: 0;
+  transition: opacity 0.5s;
+
+  &.showed {
+    opacity: 1;
+  }
 }
 
 /* ====== LAYOUT ====== */

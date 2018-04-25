@@ -1,5 +1,5 @@
 $(window).load(function () {
-    $('body').fadeIn();
+    $('body').addClass('showed');
 
     let model = new Model();
 

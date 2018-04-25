@@ -11,7 +11,10 @@
   src: local("Fira Code"), local("Fira Code"), url("../assets/FiraCode-Regular.otf") format("truetype"); }
 body {
   font-family: "Cantarell", sans-serif;
-  opacity: 0; }
+  opacity: 0;
+  transition: opacity 0.5s; }
+  body.showed {
+    opacity: 1; }
 
 /* ====== LAYOUT ====== */
 header {
