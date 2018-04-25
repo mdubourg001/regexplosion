@@ -1,4 +1,6 @@
-$(window).bind("load", function () {
+$(window).load(function () {
+    $('body').fadeIn();
+
     let model = new Model();
 
 // remove dead alerts every 15 seconds
