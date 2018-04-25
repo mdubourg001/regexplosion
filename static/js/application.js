@@ -1,4 +1,4 @@
-$(window).load(function () {
+$(window).on("load", function () {
     $('body').addClass('showed');
 
     let model = new Model();
