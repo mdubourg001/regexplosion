@@ -13,7 +13,7 @@ class Model {
         this.init_current_character();
 
         this.alerts.push(new Alert(`Everything cleared:`,
-            "Everthing was cleared. You can create a new brand regular expression!",
+            "Everthing was cleared. You can create a brand new regular expression!",
             ALERT_TYPES.ERROR,
             3));
     }
