@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Regexplosion - Easily generate regular expressions</title>
+
+    <meta name='description' content='Easily generate regular expressions.'>
+    <meta name='keywords' content='regexp, regular, expression, create'>
+
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/home.css"/>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+</head>
+
+<body>
+
+<div id="app">
+
+    <header>
+        <div class="container" id="header-container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 padding-10">
+                    <h2 id="header-title" class="no-margin"><span class="text-blue"> &#x1f4a3; REGEX</span>PLOSION</h2>
+                </div>
+                <div class="col-sm-6 hidden-xs text-right">
+                    <div class="header-ctas padding-t-5">
+                        <button class="btn margin-r-5" v-on:click="model.display_help()">Help</button>
+                        <button class="btn btn-red" v-on:click="model.clear_all()">Clear all</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" id="app-container">
+
+        <div id="core-wrapper">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="result-input-wrapper">
+                        <input id="result-input"
+                               v-bind:placeholder="model.current_character.pattern
+                               ? model.current_character.pattern.to_readable()
+                               :'Click on characters underneath to select what to match!'"
+                               readonly="readonly" type="text"
+                               v-model="model.get_readable_pattern()">
+                        <button class="btn copy-mark" v-on:click="model.copy_to_clipboard()">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="pattern-selectors-wrapper">
+
+                <div class="col-md-9 pattern-selector-div">
+                    <h2 class="font-normal text-muted">What to match ?
+                        <small>(common)</small>
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-5 col-lg-4">
+                            <div class="patterns card">
+                                <div class="pattern-group">
+                                    <div class="pattern"
+                                         v-bind:class="{ checked: model.is_any_checked() }"
+                                         v-on:click="model.check_any()">
+                                        <div class="display-inline check-mark">✓ - &nbsp</div>
+                                        <label for="any-checkbox" class="no-margin">Any</label>
+                                        <label class="pull-right">.</label>
+                                    </div>
+
+                                    <div class="pattern"
+                                         v-bind:class="{ checked: model.is_lowercase_checked()
+                                                               || model.is_uppercase_checked() }"
+                                         v-on:click="model.check_alphabetic()">
+                                        <div class="display-inline check-mark">✓ - &nbsp</div>
+                                        <label for="alpha-checkbox" class="no-margin">Alphabetic characters</label>
+                                    </div>
+
+                                    <div class="pattern second-pattern"
+                                         v-bind:class="{ checked: model.is_lowercase_checked() }"
+                                         v-on:click="model.check_lowercase()">
+                                        <div class="display-inline check-mark">✓ - &nbsp</div>
+                                        <label for="lowercase-checkbox" class="no-margin">Lowercase</label>
+                                        <label class="pull-right">[a-z]</label>
+                                    </div>
+                                    <div class="pattern second-pattern"
+                                         v-bind:class="{ checked: model.is_uppercase_checked()  }"
+                                         v-on:click="model.check_uppercase()">
+                                        <div class="display-inline check-mark">✓ - &nbsp</div>
+                                        <label for="uppercase-checkbox" class="no-margin">Uppercase</label>
+                                        <label class="pull-right">[A-Z]</label>
+                                    </div>
+                                </div>
+
+                                <div class="pattern"
+                                     v-bind:class="{ checked: model.is_numeric_checked()  }"
+                                     v-on:click="model.check_numerics()">
+                                    <div class="display-inline check-mark">✓ - &nbsp</div>
+                                    <label for="numeric-checkbox" class="no-margin">Numeric characters</label>
+                                    <label class="pull-right">[0-1]</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <hr class="visible-xs visible-sm">
+
+                        <div class="col-md-7 col-lg-8">
+                            <div class="char-list">
+                                <div v-for="char in ascii_table"
+                                     v-if="char.level === 1"
+                                     v-bind:class="{ selected: model.current_character.checked_chars.includes(char) }"
+                                     v-on:click="model.check_char(char)"
+                                     class="char margin-b-3 display-inline">
+                                    <span v-if="char.code !== 32">[[ char.char ]]</span>
+                                    <span v-if="char.code === 32">&nbspSpace&nbsp</span>
+                                </div>
+
+                                <br>
+                                <br>
+
+                                <div v-for="char in ascii_table"
+                                     v-if="char.level === 2"
+                                     v-bind:class="{ selected: model.current_character.checked_chars.includes(char) }"
+                                     v-on:click="model.check_char(char)"
+                                     class="char margin-b-3 display-inline">
+                                    <span>[[ char.char ]]</span>
+                                </div>
+
+                                <br>
+                                <br>
+
+                                <div v-for="char in ascii_table"
+                                     v-if="char.level === 3"
+                                     v-bind:class="{ selected: model.current_character.checked_chars.includes(char) }"
+                                     v-on:click="model.check_char(char)"
+                                     class="char margin-b-3 display-inline">
+                                    <span>[[ char.char ]]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 pattern-selector-div text-right"
+                     v-bind:class="{ disabled: !model.current_character.checked_chars.length }">
+                    <h2 class="font-normal text-muted">How many times ?</h2>
+                    <div class="patterns card">
+                        <div class="pattern text-left"
+                             v-on:click="model.change_how_many('NL')"
+                             v-bind:class="{ checked: model.current_character.how_many === 'NL' }">
+                            <div class="display-inline check-mark">✓ - &nbsp</div>
+                            <label for="no-limit-checkbox" class="no-margin">Undefined</label>
+                            <label class="pull-right">*</label>
+                        </div>
+
+                        <div class="pattern text-left"
+                             v-on:click="model.change_how_many('OM')"
+                             v-bind:class="{ checked: model.current_character.how_many === 'OM' }">
+                            <div class="display-inline check-mark">✓ - &nbsp</div>
+                            <label for="once-more-checkbox" class="no-margin">Once or more</label>
+                            <label class="pull-right">+</label>
+                        </div>
+
+                        <div class="pattern text-left"
+                             v-on:click="model.change_how_many('OO')"
+                             v-bind:class="{ checked: model.current_character.how_many === 'OO' }">
+                            <div class="display-inline check-mark">✓ - &nbsp</div>
+                            <label for="once-checkbox" class="no-margin">Only once</label>
+                        </div>
+
+                        <div class="pattern text-left"
+                             v-on:click="model.change_how_many('B')"
+                             v-bind:class="{ checked: model.current_character.how_many === 'B' }">
+                            <div class="display-inline check-mark">✓ - &nbsp</div>
+                            <label for="between-checkbox" class="no-margin">Between</label>
+                            <label class="pull-right">{[[model.current_character.inferior_boundary]],
+                                [[model.current_character.superior_boundary]]}</label>
+                            <input type="checkbox" hidden="hidden" id="between-checkbox">
+                        </div>
+
+                        <div class="row text-center"
+                             v-bind:class="{ disabled: model.current_character.how_many !== 'B' }">
+                            <input type="number" v-model="model.current_character.inferior_boundary"
+                                   v-on:click="model.compute_pattern()"
+                                   class="col-xs-4 col-xs-offset-1" min="0"
+                                   v-bind:max="model.current_character.superior_boundary">
+                            <b class="col-xs-2 width-auto text-left">and</b>
+                            <input type="number" class="col-xs-4"
+                                   v-on:click="model.compute_pattern()"
+                                   v-bind:min="model.current_character.inferior_boundary"
+                                   v-model="model.current_character.superior_boundary">
+                            <br>
+                            <br>
+                            <i>(let right field empty for no limit)</i>
+                        </div>
+
+                        <hr>
+
+                        <h2 v-if="model.current_character.pattern
+                                 && model.current_character.pattern.to_readable().length > 0">
+                            <span class="pull-left text-muted">Result:</span>
+                            <span>[[ model.current_character.pattern.to_readable() ]]</span>
+                        </h2>
+
+                        <button class="btn btn-red margin-r-5 margin-b-5" v-on:click="model.init_current_character()">
+                            Clear
+                        </button>
+                        <button class="btn btn-primary" v-on:click="model.add_char_to_characters_list()">
+                            Add to regex
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="model.characters_list.length > 0">
+                <hr>
+                <h2 class="font-normal text-muted">Composition of your regex</h2>
+
+                <div class="row" id="matching-list-wrapper">
+                    <div>
+                        <table id="matching-list-table">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Pattern</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="char in model.characters_list" class="handle">
+                                <td><h2 class="no-margin handle">≡</h2></td>
+                                <td>[[ char.to_readable() ]]</td>
+                                <td>
+                                    <button class="btn btn-mini btn-primary margin-r-5 margin-b-5"
+                                            v-on:click="model.duplicate_in_characters_list(char)">
+                                        Duplicate
+                                    </button>
+                                    <button class="btn btn-mini btn-red margin-r-5 margin-b-5"
+                                            v-on:click="model.remove_from_characters_list(char)">
+                                        🗙
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="alerts-zone">
+            <button class="btn btn-primary margin-b-10 pull-right"
+                    v-show="model.alerts.length > 0"
+                    v-on:click="model.remove_all_alerts()">
+                Clear alerts
+            </button>
+
+            <div v-for="alert in model.alerts"
+                 v-if="alert.should_be_displayed()"
+                 v-bind:class="[[ alert.css_class ]]"
+                 v-on:click="model.remove_alert(alert)"
+                 class="alert">
+                <h2 class="alert-title">[[ alert.title ]]</h2>
+                <h4 class="alert-message">[[ alert.message ]]</h4>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <a class="btn btn-primary" target="_blank"
+                   href="https://ko-fi.com/maximedubourg" >
+                    Donate to me
+                </a>
+                <span>&nbsp; on <b>Ko-fi</b> to help me sustain server's fees</span>
+            </div>
+            <br class="visible-xs visible-sm">
+            <div class="col-sm-12  col-md-6 text-right">
+                <span>Proudly designed by
+                <a href="https://www.mdubourg.fr" target="_blank">Maxime Dubourg</a>
+                     - 2018
+                </span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</body>
+</html>
+
+<script>let exports = {};</script>
+<script type="text/javascript" src="../static/js/vue.js"></script>
+<script type="text/javascript" src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="../static/js/utils.js"></script>
+<script type="text/javascript" src="../static/js/front_classes.js"></script>
+<script type="text/javascript" src="../static/js/classes.js"></script>
+<script type="text/javascript" src="../static/js/model.js"></script>
+<script type="text/javascript" src="../static/js/application.js"></script>
