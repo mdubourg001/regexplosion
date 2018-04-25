@@ -1,4 +1,14 @@
 /* ====== GLOBAL ====== */
+@font-face {
+  font-family: 'Cantarell';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Cantarell Regular"), local("Cantarell-Regular"), url("../assets/Cantarell.ttf") format("truetype"); }
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Fira Code"), local("Fira Code"), url("../assets/FiraCode-Bold.otf") format("truetype"); }
 body {
   font-family: "Cantarell", sans-serif; }
 
